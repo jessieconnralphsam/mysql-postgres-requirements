@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 31, 2023 at 03:07 AM
+-- Generation Time: May 31, 2023 at 04:09 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -43,6 +43,33 @@ CREATE TABLE `bus` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `bus_management_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `bus_management_view` (
+`total_buses` bigint(21)
+,`active_buses` decimal(22,0)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `bus_search_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `bus_search_view` (
+`plate_number` varchar(100)
+,`bus_name` varchar(100)
+,`model` varchar(100)
+,`manufacturer` varchar(100)
+,`color` varchar(100)
+,`fueltype` varchar(100)
+,`status` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `driver`
 --
 
@@ -61,6 +88,38 @@ CREATE TABLE `driver` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `driver_details_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `driver_details_view` (
+`driver_id` int(10)
+,`name` varchar(100)
+,`license_number` varchar(100)
+,`contact_number` varchar(100)
+,`email` varchar(100)
+,`address` varchar(100)
+,`experience` varchar(100)
+,`availability` varchar(100)
+,`created` datetime
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `driver_list_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `driver_list_view` (
+`driver_id` int(10)
+,`name` varchar(100)
+,`contact_number` varchar(100)
+,`plate_number` varchar(100)
+,`bus_name` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `passenger`
 --
 
@@ -75,6 +134,68 @@ CREATE TABLE `passenger` (
   `nationality` varchar(100) NOT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `passenger_details_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `passenger_details_view` (
+`passenger_id` int(10)
+,`name` varchar(100)
+,`age` int(10)
+,`gender` varchar(100)
+,`contact` int(10)
+,`email` varchar(100)
+,`address` varchar(100)
+,`nationality` varchar(100)
+,`created` datetime
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `passenger_list_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `passenger_list_view` (
+`passenger_id` int(10)
+,`name` varchar(100)
+,`age` int(10)
+,`gender` varchar(100)
+,`contact` int(10)
+,`email` varchar(100)
+,`address` varchar(100)
+,`nationality` varchar(100)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `passenger_management_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `passenger_management_view` (
+`total_passengers` bigint(21)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `passenger_search_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `passenger_search_view` (
+`passenger_id` int(10)
+,`name` varchar(100)
+,`age` int(10)
+,`gender` varchar(100)
+,`contact` int(10)
+,`email` varchar(100)
+,`address` varchar(100)
+,`nationality` varchar(100)
+);
 
 -- --------------------------------------------------------
 
@@ -131,6 +252,78 @@ CREATE TABLE `ticket` (
   `reservation_id` int(10) NOT NULL,
   `ticket_status` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `bus_management_view`
+--
+DROP TABLE IF EXISTS `bus_management_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bus_management_view`  AS SELECT count(0) AS `total_buses`, sum(case when `bus`.`status` = 'Active' then 1 else 0 end) AS `active_buses` FROM `bus``bus`  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `bus_search_view`
+--
+DROP TABLE IF EXISTS `bus_search_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bus_search_view`  AS SELECT `bus`.`plate_number` AS `plate_number`, `bus`.`bus_name` AS `bus_name`, `bus`.`model` AS `model`, `bus`.`manufacturer` AS `manufacturer`, `bus`.`color` AS `color`, `bus`.`fueltype` AS `fueltype`, `bus`.`status` AS `status` FROM `bus``bus`  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `driver_details_view`
+--
+DROP TABLE IF EXISTS `driver_details_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `driver_details_view`  AS SELECT `driver`.`driver_id` AS `driver_id`, `driver`.`name` AS `name`, `driver`.`license_number` AS `license_number`, `driver`.`contact_number` AS `contact_number`, `driver`.`email` AS `email`, `driver`.`address` AS `address`, `driver`.`experience` AS `experience`, `driver`.`availability` AS `availability`, `driver`.`created` AS `created` FROM `driver``driver`  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `driver_list_view`
+--
+DROP TABLE IF EXISTS `driver_list_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `driver_list_view`  AS SELECT `driver`.`driver_id` AS `driver_id`, `driver`.`name` AS `name`, `driver`.`contact_number` AS `contact_number`, `bus`.`plate_number` AS `plate_number`, `bus`.`bus_name` AS `bus_name` FROM (`driver` join `bus` on(`driver`.`driver_id` = `bus`.`driver_id`))  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `passenger_details_view`
+--
+DROP TABLE IF EXISTS `passenger_details_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `passenger_details_view`  AS SELECT `passenger`.`passenger_id` AS `passenger_id`, `passenger`.`name` AS `name`, `passenger`.`age` AS `age`, `passenger`.`gender` AS `gender`, `passenger`.`contact` AS `contact`, `passenger`.`email` AS `email`, `passenger`.`address` AS `address`, `passenger`.`nationality` AS `nationality`, `passenger`.`created` AS `created` FROM `passenger``passenger`  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `passenger_list_view`
+--
+DROP TABLE IF EXISTS `passenger_list_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `passenger_list_view`  AS SELECT `passenger`.`passenger_id` AS `passenger_id`, `passenger`.`name` AS `name`, `passenger`.`age` AS `age`, `passenger`.`gender` AS `gender`, `passenger`.`contact` AS `contact`, `passenger`.`email` AS `email`, `passenger`.`address` AS `address`, `passenger`.`nationality` AS `nationality` FROM `passenger``passenger`  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `passenger_management_view`
+--
+DROP TABLE IF EXISTS `passenger_management_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `passenger_management_view`  AS SELECT count(0) AS `total_passengers` FROM `passenger``passenger`  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `passenger_search_view`
+--
+DROP TABLE IF EXISTS `passenger_search_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `passenger_search_view`  AS SELECT `passenger`.`passenger_id` AS `passenger_id`, `passenger`.`name` AS `name`, `passenger`.`age` AS `age`, `passenger`.`gender` AS `gender`, `passenger`.`contact` AS `contact`, `passenger`.`email` AS `email`, `passenger`.`address` AS `address`, `passenger`.`nationality` AS `nationality` FROM `passenger``passenger`  ;
 
 --
 -- Indexes for dumped tables
