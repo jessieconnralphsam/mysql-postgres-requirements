@@ -1,0 +1,155 @@
+
+trigger for insert:
+
+DELIMITER $$
+CREATE TRIGGER delete_from_ticket
+AFTER DELETE ON reservation
+FOR EACH ROW
+BEGIN
+  INSERT INTO ticket (reservation_id, status)
+  VALUES (OLD.reservation_id, 'cancelled');
+END$$
+DELIMITER ;
+
+trigger for delete:
+
+DELIMITER $$
+CREATE TRIGGER delete_from_ticket
+AFTER INSERT ON reservation
+FOR EACH ROW
+BEGIN
+  INSERT INTO ticket (reservation_id, status)
+  VALUES (NEW.reservation_id, 'active');
+END$$
+DELIMITER ;
+
+Function:
+
+count buses:
+
+DELIMITER //
+CREATE FUNCTION CountAvailableBuses()
+RETURNS INT
+BEGIN
+    DECLARE count INT;
+    
+    SELECT COUNT(*) INTO count 
+    FROM YourTableName -- Replace with the actual table name
+    WHERE status = 'Available';
+    
+    RETURN count;
+END //
+DELIMITER ;
+
+stores procedure:
+
+execute storedprocedure
+CALL InsertPassenger('John Doe', 25, 'Male', 1234567890, 'johndoe@example.com', '123 Main St', 'USA');
+
+
+sql code:
+
+DELIMITER //
+
+CREATE PROCEDURE InsertPassenger(
+    IN name VARCHAR(100),
+    IN age INT,
+    IN gender VARCHAR(100),
+    IN contact INT,
+    IN email VARCHAR(100),
+    IN address VARCHAR(100),
+    IN nationality VARCHAR(100)
+)
+BEGIN
+    -- Declare a variable to store the role of the current user
+    DECLARE user_role VARCHAR(100);
+    
+    -- Assign the role of the current user to the variable
+    SET user_role = CURRENT_ROLE();
+    
+    -- Check if the user role is 'passenger'
+    IF (user_role = 'passenger') THEN
+        -- Only passengers can perform the insert operation
+        INSERT INTO passenger (name, age, gender, contact, email, address, nationality, created)
+        VALUES (name, age, gender, contact, email, address, nationality, CURRENT_TIMESTAMP);
+    ELSE
+        -- Users without the 'passenger' role are not allowed to insert data
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient privileges';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+execute procedure:
+CALL insert_reservation(2, 1, 19);
+
+
+sql code:
+DELIMITER //
+
+CREATE PROCEDURE insert_reservation(
+    IN p_passenger_id INT,
+    IN p_schedule_id INT,
+    IN p_seat_number INT
+)
+BEGIN
+    -- Declare the variable
+    DECLARE user_role VARCHAR(100);
+
+    -- Assign roles
+    SET user_role = CURRENT_ROLE();
+
+    -- Check if the role is 'passenger'
+    IF (user_role = 'passenger') THEN
+        -- Only passengers can perform the insert operation
+        INSERT INTO reservation (passenger_id, schedule_id, seat_number, created)
+        VALUES (p_passenger_id, p_schedule_id, p_seat_number, CURRENT_TIMESTAMP);
+
+        SELECT 'Reservation inserted successfully.';
+    ELSE
+        -- Users without the 'passenger' role are not allowed to insert data
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient privileges! You do not have the required role to perform this operation.';
+    END IF;
+END //
+
+DELIMITER ;
+
+-------------------------------------------------------
+
+
+roles:
+SELECT DISTINCT `User` AS Role FROM mysql.user;
+
+create roles:
+CREATE ROLE passenger;
+
+set priviledges:
+USE bus_reservation_system;
+GRANT SELECT, INSERT, UPDATE, DELETE ON passenger TO passenger;
+
+note!! 
+set specific privileges on specific table
+
+
+
+views:reservation list
+
+CREATE VIEW reservation_list_view AS
+SELECT
+    r.reservation_id,
+    p.name,
+    p.contact,
+    s.route_id,
+    rt.source,
+    rt.destination,
+    rt.departure,
+    rt.arrival_time,
+    r.seat_number,
+    r.created
+FROM
+    reservation r
+    JOIN passenger p ON r.passenger_id = p.passenger_id
+    JOIN schedule s ON r.schedule_id = s.schedule_id
+    JOIN routes rt ON s.route_id = rt.route_id;
+
