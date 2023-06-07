@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 06, 2023 at 04:24 AM
+-- Generation Time: Jun 07, 2023 at 06:39 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -22,47 +22,6 @@ SET time_zone = "+00:00";
 --
 
 DELIMITER $$
---
--- Procedures
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertPassenger` (IN `name` VARCHAR(100), IN `age` INT, IN `gender` VARCHAR(100), IN `contact` INT, IN `email` VARCHAR(100), IN `address` VARCHAR(100), IN `nationality` VARCHAR(100))   BEGIN
-    -- Declare nako ang variable
-    DECLARE user_role VARCHAR(100);
-    
-    -- Assign roles
-    SET user_role = CURRENT_ROLE();
-    
-    -- Check kung ang role kay 'passenger'
-    IF (user_role = 'passenger') THEN
-        --  passengers lang maka perform sa insert operation
-        INSERT INTO passenger (name, age, gender, contact, email, address, nationality, created)
-        VALUES (name, age, gender, contact, email, address, nationality, CURRENT_TIMESTAMP);
-    ELSE
-        -- Users without the 'passenger' role dili sila allowed to insert data
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient privileges! You do not have the required role to perform this operation.';
-    END IF;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `insert_reservation` (IN `p_passenger_id` INT, IN `p_schedule_id` INT, IN `p_seat_number` INT)   BEGIN
-    -- Declare the variable
-    DECLARE user_role VARCHAR(100);
-
-    -- Assign roles
-    SET user_role = CURRENT_ROLE();
-
-    -- Check if the role is 'passenger'
-    IF (user_role = 'passenger') THEN
-        -- Only passengers can perform the insert operation
-        INSERT INTO reservation (passenger_id, schedule_id, seat_number, created)
-        VALUES (p_passenger_id, p_schedule_id, p_seat_number, CURRENT_TIMESTAMP);
-        
-        SELECT 'Reservation inserted successfully.';
-    ELSE
-        -- Users without the 'passenger' role are not allowed to insert data
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient privileges! You do not have the required role to perform this operation.';
-    END IF;
-END$$
-
 --
 -- Functions
 --
@@ -122,7 +81,20 @@ CREATE TABLE `bus` (
 --
 
 INSERT INTO `bus` (`plate_number`, `bus_name`, `capacity`, `model`, `manufacturer`, `color`, `fueltype`, `status`, `driver_id`, `created`) VALUES
-('XXXX-12345', 'Metro Shuttle A', '80', 'Old', 'Ford INC.', 'Red', 'Diesel', 'Available', 1, '2023-06-06 07:45:22');
+('XXXX-12345', 'Metro Shuttle A', '80', 'Old', 'Ford INC.', 'Red', 'Diesel', 'Available', 1, '2023-06-06 07:45:22'),
+('XXXX-12346', 'Maharlika', '98', 'New', 'Mitsubishi', 'Pink', 'Diesel', 'Available', 5, '2023-06-08 00:26:21'),
+('XXXX-12347', 'Maharlika', '98', 'New', 'Mitsubishi', 'Pink', 'Diesel', 'Available', 5, '2023-06-08 00:29:28'),
+('XXXX-12348', 'Nissan', '48', 'New', 'Mitsubishi', 'Brown', 'Diesel', 'Available', 5, '2023-06-08 00:29:28'),
+('XXXX-12349', 'Electric Bus', '98', 'New', 'Mitsubishi', 'Pink', 'Electric', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12351', 'Nissan', '48', 'New', 'Mitsubishi', 'Brown', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12352', 'Eugene', '38', 'New', 'Mitsubishi', 'Yellow', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12353', 'Ford', '56', 'New', 'Mitsubishi', 'Yellow', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12354', 'Ford', '56', 'New', 'Mitsubishi', 'Yellow', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12355', 'Ford', '56', 'New', 'Mitsubishi', 'Yellow', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12356', 'Ford', '56', 'New', 'Mitsubishi', 'Yellow', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12357', 'Ford', '56', 'New', 'Mitsubishi', 'Yellow', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12358', 'Electric Bus', '98', 'New', 'Mitsubishi', 'Pink', 'Electric', 'Available', 5, '2023-06-08 00:33:03'),
+('XXXX-12359', 'Electric Bus', '98', 'New', 'Mitsubishi', 'Pink', 'Electric', 'Available', 5, '2023-06-08 00:33:03');
 
 -- --------------------------------------------------------
 
@@ -181,7 +153,10 @@ CREATE TABLE `passenger` (
 
 INSERT INTO `passenger` (`passenger_id`, `name`, `age`, `gender`, `contact`, `email`, `address`, `nationality`, `created`) VALUES
 (1, 'Jessie Conn Ralph M. Sam', 21, 'Male', 981821721, 'sam@gmail.com', 'Fatima General Santos City', 'Filipino', '2023-06-06 07:47:56'),
-(2, 'Matthew Fang Bilaos', 20, 'Male', 981821729, 'bilaos@gmail.com', 'Zone 4 Block 6 General Santos City', 'Filipino', '2023-06-06 08:48:07');
+(2, 'Matthew Fang Bilaos', 20, 'Male', 981821729, 'bilaos@gmail.com', 'Zone 4 Block 6 General Santos City', 'Filipino', '2023-06-06 08:48:07'),
+(3, 'Mateo Cortez', 24, 'Male', 981672162, 'cortez@gmail.com', 'Fatima General Santos City', 'Filipino', '2023-06-08 00:36:03'),
+(4, 'Richard Bangoy Jr.', 24, 'Male', 981672162, 'bangoy@gmail.com', 'Fatima General Santos City', 'Filipino', '2023-06-08 00:37:18'),
+(5, 'Mateo Cortez', 24, 'Male', 981672162, 'cortez@gmail.com', 'Fatima General Santos City', 'Filipino', '2023-06-08 00:37:18');
 
 -- --------------------------------------------------------
 
@@ -389,7 +364,7 @@ ALTER TABLE `driver`
 -- AUTO_INCREMENT for table `passenger`
 --
 ALTER TABLE `passenger`
-  MODIFY `passenger_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `passenger_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reservation`
