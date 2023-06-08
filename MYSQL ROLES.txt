@@ -1,0 +1,129 @@
+Agent:
+CREATE ROLES & GRANT ROLES:
+
+-- Create the role
+CREATE ROLE customer_support;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`passenger` TO customer_support;
+
+-- Grant the role to a user
+GRANT customer_support TO 'AGENTSAM'@'%';
+
+
+
+-- Create the  role
+
+CREATE ROLE booking_agent;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`reservation` TO customer_support;
+
+-- Grant the role to a user
+GRANT customer_support TO 'AGENTSAM'@'%';
+
+
+-- Create the role
+
+CREATE ROLE ticketing_agent;
+
+-- Grant privileges to the role
+GRANT SELECT ON `bus_reservation_system`.`ticket` TO customer_support;
+
+-- Grant the role to a user
+GRANT customer_support TO 'AGENTSAM'@'%';
+
+USE THE ROLE:
+
+SET ROLE customer_support;
+SET ROLE booking_agent;
+SET ROLE ticketing_agent;
+
+---------------------------------------------------------------------------------------------------
+passenger:
+
+-- Create the role
+CREATE ROLE passenger;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`passenger` TO passenger;
+
+-- Grant the role to a user
+GRANT passenger TO 'PASSENGERSAM'@'%';
+
+
+
+-- Create the  role
+
+CREATE ROLE booking;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`reservation` TO booking;
+
+-- Grant the role to a user
+GRANT booking TO 'PASSENGERSAM'@'%';
+
+USE THE ROLE:
+
+SET ROLE passenger;
+SET ROLE booking;
+------------------------------------------------------------------------------------------------
+admin:
+
+-- Create the role
+CREATE ROLE bus_administator;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`bus` TO bus_administrator;
+
+-- Grant the role to a user
+GRANT bus_administator TO 'ADMINSAM'@'%';
+
+
+-- Create the role
+CREATE ROLE route_administator;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`routes` TO route_administrator;
+
+-- Grant the role to a user
+GRANT route_administator TO 'ADMINSAM'@'%';
+
+
+--create the role
+CREATE ROLE ticketing_manager;
+
+-- Grant privileges to the role
+GRANT SELECT, DELETE ON `bus_reservation_system`.`ticket` TO ticketing_manager;
+
+-- Grant the role to a user
+GRANT ticketing_manager TO 'ADMINSAM'@'%';
+
+USE THE ROLE:
+
+SET ROLE bus_administator;
+SET ROLE route_administator;
+SET ROLE ticketing_manager;
+----------------------------------------------------------------------------------------------------
+driver:
+
+-- Create the role
+CREATE ROLE bus_driver;
+
+-- Grant privileges to the role
+GRANT SELECT, INSERT, UPDATE, DELETE ON `bus_reservation_system`.`driver` TO bus_driver;
+
+-- Grant the role to a user
+GRANT bus_administator TO 'DRIVERSAM'@'%';
+
+SET ROLE bus_driver;
+----------------------------------------------------------------------------------------------------
+
+REMOVE GRANTS
+-- Revoke privileges from a user or role
+REVOKE SELECT, INSERT, UPDATE, DELETE ON `db name`.`table` FROM 'username'@'%';
+REVOKE SELECT, INSERT, UPDATE, DELETE ON `db name`.`table` FROM 'username'@'%';
+
+-- Revoke a role from a user
+REVOKE customer_support FROM 'username'@'%';
+
