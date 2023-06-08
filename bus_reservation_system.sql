@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2023 at 06:39 PM
+-- Generation Time: Jun 08, 2023 at 01:02 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -83,7 +83,7 @@ CREATE TABLE `bus` (
 INSERT INTO `bus` (`plate_number`, `bus_name`, `capacity`, `model`, `manufacturer`, `color`, `fueltype`, `status`, `driver_id`, `created`) VALUES
 ('XXXX-12345', 'Metro Shuttle A', '80', 'Old', 'Ford INC.', 'Red', 'Diesel', 'Available', 1, '2023-06-06 07:45:22'),
 ('XXXX-12346', 'Maharlika', '98', 'New', 'Mitsubishi', 'Pink', 'Diesel', 'Available', 5, '2023-06-08 00:26:21'),
-('XXXX-12347', 'Maharlika', '98', 'New', 'Mitsubishi', 'Pink', 'Diesel', 'Available', 5, '2023-06-08 00:29:28'),
+('XXXX-12347', 'Maharlika', '98', 'New', 'Mitsubishi', 'Pink', 'Diesel', 'NA', 5, '2023-06-08 00:29:28'),
 ('XXXX-12348', 'Nissan', '48', 'New', 'Mitsubishi', 'Brown', 'Diesel', 'Available', 5, '2023-06-08 00:29:28'),
 ('XXXX-12349', 'Electric Bus', '98', 'New', 'Mitsubishi', 'Pink', 'Electric', 'Available', 5, '2023-06-08 00:33:03'),
 ('XXXX-12351', 'Nissan', '48', 'New', 'Mitsubishi', 'Brown', 'Diesel', 'Available', 5, '2023-06-08 00:33:03'),
@@ -178,7 +178,9 @@ CREATE TABLE `reservation` (
 
 INSERT INTO `reservation` (`reservation_id`, `passenger_id`, `schedule_id`, `seat_number`, `created`) VALUES
 (4, 2, 1, 40, '2023-06-06 10:09:34'),
-(5, 2, 1, 23, '2023-06-06 10:16:33');
+(5, 2, 1, 23, '2023-06-06 10:16:33'),
+(6, 3, 3, 65, '2023-06-08 11:15:22'),
+(7, 2, 3, 34, '2023-06-08 11:19:18');
 
 --
 -- Triggers `reservation`
@@ -209,8 +211,8 @@ CREATE TABLE `reservation_details_view` (
 ,`contact` int(10)
 ,`source` varchar(100)
 ,`destination` varchar(100)
-,`departure` varchar(100)
-,`arrival_time` varchar(100)
+,`departure` time
+,`arrival_time` time
 ,`seat_number` int(10)
 ,`created` datetime
 );
@@ -229,8 +231,8 @@ CREATE TABLE `routes` (
   `duration` varchar(100) NOT NULL,
   `fare` int(10) NOT NULL,
   `stops` varchar(100) NOT NULL,
-  `departure` varchar(100) NOT NULL,
-  `arrival_time` varchar(100) NOT NULL,
+  `departure` time NOT NULL,
+  `arrival_time` time NOT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -239,7 +241,15 @@ CREATE TABLE `routes` (
 --
 
 INSERT INTO `routes` (`route_id`, `source`, `destination`, `distance`, `duration`, `fare`, `stops`, `departure`, `arrival_time`, `created`) VALUES
-(1, 'Gensan', 'Davao', '2 km', '20 Minutes', 200, 'Davao Terminal', '4:30 AM', '4:50 AM', '2023-06-06 07:49:44');
+(1, 'Gensan', 'Davao', '2 km', '20 Minutes', 200, 'Davao Terminal', '04:30:00', '04:50:00', '2023-06-06 07:49:44'),
+(2, 'Polomolok', 'Davao City', '', '200 km', 500, 'Davao City Terminal', '00:00:10', '00:00:12', '2023-06-08 10:40:46'),
+(3, 'Polomolok', 'Davao City', '', '200 km', 500, 'Davao City Terminal', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+(4, 'Tagum City', 'Davao City', '', '30 km', 80, 'Davao City Terminal', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+(5, 'Polomolok', 'Tagum City', '', '200 km', 500, 'Tagum City Terminal', '00:00:11', '00:00:12', '2023-06-08 10:44:00'),
+(6, 'Polomolok', 'Lagao', '', '100 km', 80, 'Lagao', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+(7, 'Fatima', 'Lagao', '', '30 km', 90, 'Lagao', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+(8, 'Fatima', 'Calumpang', '', '10 km', 20, 'Lagao', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+(9, 'Polomolok', 'Gensan', '20 km', '30 minutes', 100, 'Bolaong Terminal', '11:00:00', '12:00:00', '2023-06-08 11:17:41');
 
 -- --------------------------------------------------------
 
@@ -259,7 +269,23 @@ CREATE TABLE `schedule` (
 --
 
 INSERT INTO `schedule` (`schedule_id`, `plate_number`, `route_id`, `created`) VALUES
-(1, 'XXXX-12345', 1, '2023-06-06 09:28:56');
+(1, 'XXXX-12345', 1, '2023-06-06 09:28:56'),
+(2, 'XXXX-12346', 5, '2023-06-08 11:14:16'),
+(3, 'XXXX-12347', 9, '2023-06-08 11:18:41');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `schedule_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `schedule_view` (
+`plate_number` varchar(100)
+,`departure` time
+,`arrival` time
+,`source` varchar(100)
+,`destination` varchar(100)
+);
 
 -- --------------------------------------------------------
 
@@ -285,7 +311,28 @@ INSERT INTO `ticket` (`ticket_number`, `reservation_id`, `ticket_status`, `creat
 (4, 3, 'cancelled', '2023-06-06 09:27:26'),
 (5, 4, 'active', '2023-06-06 10:09:34'),
 (6, 2, 'cancelled', '2023-06-06 10:10:38'),
-(7, 5, 'active', '2023-06-06 10:16:33');
+(7, 5, 'active', '2023-06-06 10:16:33'),
+(8, 6, 'active', '2023-06-08 11:15:22'),
+(9, 7, 'active', '2023-06-08 11:19:18'),
+(10, 8, 'active', '2023-06-08 19:00:06'),
+(11, 8, 'cancelled', '2023-06-08 19:01:21');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `ticket_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `ticket_view` (
+`passenger_name` varchar(100)
+,`bus_name` varchar(100)
+,`source` varchar(100)
+,`destination` varchar(100)
+,`departure_time` time
+,`arrival_time` time
+,`fare` int(10)
+,`status` varchar(100)
+);
 
 -- --------------------------------------------------------
 
@@ -295,6 +342,24 @@ INSERT INTO `ticket` (`ticket_number`, `reservation_id`, `ticket_status`, `creat
 DROP TABLE IF EXISTS `reservation_details_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `reservation_details_view`  AS SELECT `p`.`name` AS `name`, `p`.`contact` AS `contact`, `rt`.`source` AS `source`, `rt`.`destination` AS `destination`, `rt`.`departure` AS `departure`, `rt`.`arrival_time` AS `arrival_time`, `r`.`seat_number` AS `seat_number`, `r`.`created` AS `created` FROM (((`reservation` `r` join `passenger` `p` on(`r`.`passenger_id` = `p`.`passenger_id`)) join `schedule` `s` on(`r`.`schedule_id` = `s`.`schedule_id`)) join `routes` `rt` on(`s`.`route_id` = `rt`.`route_id`))  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `schedule_view`
+--
+DROP TABLE IF EXISTS `schedule_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `schedule_view`  AS SELECT `schedule`.`plate_number` AS `plate_number`, `routes`.`departure` AS `departure`, `routes`.`arrival_time` AS `arrival`, `routes`.`source` AS `source`, `routes`.`destination` AS `destination` FROM ((`schedule` join `bus` on(`schedule`.`plate_number` = `bus`.`plate_number`)) join `routes` on(`schedule`.`route_id` = `routes`.`route_id`))  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `ticket_view`
+--
+DROP TABLE IF EXISTS `ticket_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ticket_view`  AS SELECT `passenger`.`name` AS `passenger_name`, `bus`.`bus_name` AS `bus_name`, `routes`.`source` AS `source`, `routes`.`destination` AS `destination`, `routes`.`departure` AS `departure_time`, `routes`.`arrival_time` AS `arrival_time`, `routes`.`fare` AS `fare`, `ticket`.`ticket_status` AS `status` FROM (((((`ticket` join `reservation` on(`ticket`.`reservation_id` = `reservation`.`reservation_id`)) join `passenger` on(`reservation`.`passenger_id` = `passenger`.`passenger_id`)) join `schedule` on(`reservation`.`schedule_id` = `schedule`.`schedule_id`)) join `bus` on(`schedule`.`plate_number` = `bus`.`plate_number`)) join `routes` on(`schedule`.`route_id` = `routes`.`route_id`))  ;
 
 --
 -- Indexes for dumped tables
@@ -370,25 +435,25 @@ ALTER TABLE `passenger`
 -- AUTO_INCREMENT for table `reservation`
 --
 ALTER TABLE `reservation`
-  MODIFY `reservation_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `reservation_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `routes`
 --
 ALTER TABLE `routes`
-  MODIFY `route_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `route_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `schedule`
 --
 ALTER TABLE `schedule`
-  MODIFY `schedule_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `schedule_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ticket`
 --
 ALTER TABLE `ticket`
-  MODIFY `ticket_number` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ticket_number` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
