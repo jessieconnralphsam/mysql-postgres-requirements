@@ -1,0 +1,52 @@
+INSERT INTO driver (name, license_number, contact_number, email, address, experience, availability)
+VALUES ('John Doe', 'AAAA-11111', '1234567890', 'johndoe@example.com', '123 Main St', '5 years', 'Available'),
+;
+
+-- Dumping data for table `driver`
+
+INSERT INTO driver (name, license_number, contact_number, email, address, experience, availability, created)
+VALUES
+  ('Ford Ulbata Jr.', 'AAAA-12345', '0936415272', 'ulbata@gmail.com', 'Fatima General Santos City', '2 years', 'Available', '2023-06-06 08:18:56'),
+  ('Richard Bangoy', 'AAAA-12346', '09664267189', 'bangoy@gmail.com', 'Lagao General Santos City', '10 years', 'Available', '2023-06-06 08:18:56'),
+  ('John Doe', 'AAAA-11111', '1234567890', 'johndoe@example.com', '123 Main St', '5 years', 'Available', '2023-06-06 08:18:56'),
+  ('Jane Smith', 'BBBB-22222', '0987654321', 'janesmith@example.com', '456 Elm St', '3 years', 'Not Available', '2023-06-06 08:18:56'),
+  ('David Johnson', 'CCCC-33333', '9876543210', 'davidjohnson@example.com', '789 Oak Ave', '7 years', 'Available', '2023-06-06 08:18:56'),
+  ('Emily Davis', 'DDDD-44444', '0123456789', 'emilydavis@example.com', '321 Maple Rd', '2 years', 'Not Available', '2023-06-06 08:18:56'),
+  ('Michael Wilson', 'EEEE-55555', '6789012345', 'michaelwilson@example.com', '654 Pine Ln', '6 years', 'Available', '2023-06-06 08:18:56'),
+  ('Sarah Anderson', 'FFFF-66666', '5432167890', 'sarahanderson@example.com', '987 Cedar St', '4 years', 'Not Available', '2023-06-06 08:18:56'),
+  ('Matthew Thomas', 'GGGG-77777', '8901234567', 'matthewthomas@example.com', '876 Birch Ave', '8 years', 'Available', '2023-06-06 08:18:56');
+
+
+INSERT INTO routes (source, destination, distance, duration, fare, stops, departure, arrival_time, created)
+VALUES
+('Gensan', 'Davao', '2 km', '20 Minutes', 200, 'Davao Terminal', '04:30:00', '04:50:00', '2023-06-06 07:49:44'),
+('Polomolok', 'Davao City', '', '200 km', 500, 'Davao City Terminal', '00:00:10', '00:00:12', '2023-06-08 10:40:46'),
+('Polomolok', 'Davao City', '', '200 km', 500, 'Davao City Terminal', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+('Tagum City', 'Davao City', '', '30 km', 80, 'Davao City Terminal', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+('Polomolok', 'Tagum City', '', '200 km', 500, 'Tagum City Terminal', '00:00:11', '00:00:12', '2023-06-08 10:44:00'),
+('Polomolok', 'Lagao', '', '100 km', 80, 'Lagao', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+('Fatima', 'Lagao', '', '30 km', 90, 'Lagao', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+('Fatima', 'Calumpang', '', '10 km', 20, 'Lagao', '00:00:10', '00:00:12', '2023-06-08 10:44:00'),
+('Polomolok', 'Gensan', '20 km', '30 minutes', 100, 'Bolaong Terminal', '11:00:00', '12:00:00', '2023-06-08 11:17:41');
+
+
+INSERT INTO schedule (plate_number, route_id) VALUES
+('XXXX-12345', 2),
+('XXXX-12346', 5),
+('XXXX-12347', 9);
+
+
+INSERT INTO passenger (name, age, gender, contact, email, address, nationality) VALUES
+('Jessie Conn Ralph M. Sam', 21, 'Male', '981821721', 'sam@gmail.com', 'Fatima General Santos City', 'Filipino'),
+('Matthew Fang Bilaos', 20, 'Male', '981821729', 'bilaos@gmail.com', 'Zone 4 Block 6 General Santos City', 'Filipino'),
+('Mateo Cortez', 24, 'Male', '981672162', 'cortez@gmail.com', 'Fatima General Santos City', 'Filipino'),
+('Richard Bangoy Jr.', 24, 'Male', '981672162', 'bangoy@gmail.com', 'Fatima General Santos City', 'Filipino'),
+('Mateo Cortez', 24, 'Male', '981672162', 'cortez@gmail.com', 'Fatima General Santos City', 'Filipino');
+
+CREATE TRIGGER cancel_ticket
+AFTER DELETE ON reservation
+FOR EACH ROW
+INSERT INTO ticket (reservation_id, ticket_status)
+VALUES (OLD.reservation_id, 'cancelled');
+
+

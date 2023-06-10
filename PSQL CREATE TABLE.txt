@@ -1,0 +1,112 @@
+CREATE TABLE driver (
+  driver_id serial PRIMARY KEY,
+  name varchar(100) NOT NULL,
+  license_number varchar(100) NOT NULL,
+  contact_number varchar(100) NOT NULL,
+  email varchar(100) NOT NULL,
+  address varchar(100) NOT NULL,
+  experience varchar(100) NOT NULL,
+  availability varchar(100) NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp
+);
+
+CREATE INDEX bus_driver_id_index ON bus (driver_id);
+
+CREATE TABLE bus (
+  plate_number varchar(100) PRIMARY KEY,
+  bus_name varchar(100) NOT NULL,
+  capacity varchar(100) NOT NULL,
+  model varchar(100) NOT NULL,
+  manufacturer varchar(100) NOT NULL,
+  color varchar(100) NOT NULL,
+  fueltype varchar(100) NOT NULL,
+  status varchar(100) NOT NULL,
+  driver_id int NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp
+);
+
+CREATE INDEX index_bus_plate_number ON bus (plate_number);
+
+CREATE TABLE routes (
+  route_id serial PRIMARY KEY,
+  source varchar(100) NOT NULL,
+  destination varchar(100) NOT NULL,
+  distance varchar(100) NOT NULL,
+  duration varchar(100) NOT NULL,
+  fare int NOT NULL,
+  stops varchar(100) NOT NULL,
+  departure time NOT NULL,
+  arrival_time time NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp
+);
+
+CREATE INDEX index_routes_route_id ON routes (route_id);
+
+
+CREATE TABLE schedule (
+  schedule_id serial PRIMARY KEY,
+  plate_number varchar(100) NOT NULL,
+  route_id int NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp
+);
+
+CREATE INDEX index_schedule_schedule_id ON schedule (schedule_id);
+
+ALTER TABLE schedule
+ADD CONSTRAINT fk_schedule_bus
+FOREIGN KEY (plate_number) REFERENCES bus (plate_number);
+
+ALTER TABLE schedule
+ADD CONSTRAINT fk_schedule_routes
+FOREIGN KEY (route_id) REFERENCES routes (route_id);
+
+CREATE TABLE passenger (
+  passenger_id serial PRIMARY KEY,
+  name varchar(100) NOT NULL,
+  age int NOT NULL,
+  gender varchar(100) NOT NULL,
+  contact int NOT NULL,
+  email varchar(100) NOT NULL,
+  address varchar(100) NOT NULL,
+  nationality varchar(100) NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp
+);
+CREATE INDEX index_passenger_passenger_id ON passenger (passenger_id);
+
+
+CREATE TABLE reservation (
+  reservation_id serial PRIMARY KEY,
+  passenger_id int NOT NULL,
+  schedule_id int NOT NULL,
+  seat_number int NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp
+);
+
+ALTER TABLE reservation
+ADD CONSTRAINT fk_reservation_passenger
+FOREIGN KEY (passenger_id) REFERENCES passenger (passenger_id);
+
+ALTER TABLE reservation
+ADD CONSTRAINT fk_reservation_schedule
+FOREIGN KEY (schedule_id) REFERENCES schedule (schedule_id);
+
+CREATE TABLE ticket (
+  ticket_number int NOT NULL,
+  reservation_id int NOT NULL,
+  ticket_status varchar(100) NOT NULL,
+  created timestamp NOT NULL DEFAULT current_timestamp,
+  PRIMARY KEY (ticket_number)
+);
+INSERT INTO reservation (passenger_id, schedule_id, seat_number)
+VALUES (1, 8, 10);
+
+
+
+CREATE TRIGGER set_ticket_status_active_trigger
+AFTER INSERT ON reservation
+FOR EACH ROW
+EXECUTE FUNCTION set_ticket_status_active();
+
+DROP TRIGGER [IF EXISTS] set_ticket_status_active_trigger ON reservation;
+DROP FUNCTION function_name([argument_types]);
+
